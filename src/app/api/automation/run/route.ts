@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
-import { runOverdueAutomation } from '@/lib/automation';
+import { runOverdueAutomation, runPendingAutomation } from '@/lib/automation';
 
 function isAuthorizedCron(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
@@ -16,9 +16,18 @@ function isAuthorizedCron(request: Request) {
   return header.slice('Bearer '.length) === cronSecret;
 }
 
+async function executeAutomation() {
+  const overdue = await runOverdueAutomation();
+  const pending = await runPendingAutomation();
+  return {
+    overdueProcessed: overdue.processed,
+    pendingProcessed: pending.processed
+  };
+}
+
 export async function GET(request: Request) {
   if (isAuthorizedCron(request)) {
-    const result = await runOverdueAutomation();
+    const result = await executeAutomation();
     return NextResponse.json({ source: 'cron', ...result });
   }
 
@@ -27,7 +36,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const result = await runOverdueAutomation();
+  const result = await executeAutomation();
   return NextResponse.json({ source: 'admin', ...result });
 }
 

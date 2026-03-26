@@ -33,7 +33,7 @@ npm install
 cp .env.example .env
 ```
 
-4. Set `DATABASE_URL` to your local or cloud PostgreSQL
+4. Set `DATABASE_URL` to your PostgreSQL instance, adjust `AUTH_SECRET`, `CRON_SECRET`, and SMTP settings if needed.
 5. Run migrations + seed:
 
 ```bash
@@ -69,6 +69,10 @@ Open: [http://localhost:3000](http://localhost:3000)
 - `DATABASE_URL` (Vercel Postgres or any managed Postgres)
 - `AUTH_SECRET` (long random string)
 - `CRON_SECRET` (long random string)
+- `PENDING_REMINDER_HOURS` (optional, default 48)
+- `PENDING_REMINDER_COOLDOWN_HOURS` (optional, default 24)
+- `RESEND_API_KEY` (optional, for Resend automation)
+- `RESEND_FROM` (optional)
 - `SMTP_HOST` (optional)
 - `SMTP_PORT` (optional)
 - `SMTP_USER` (optional)
@@ -77,15 +81,15 @@ Open: [http://localhost:3000](http://localhost:3000)
 
 5. Deploy.
 
-## Scheduled Automation on Vercel
+## Automation reminders
 
-`vercel.json` includes an hourly cron:
+- `vercel.json` schedules `/api/automation/run` once per hour.
+- The API runs both overdue and pending reminder flows sequentially, so the cron and manual invocations behave the same.
+- If `CRON_SECRET` is configured, Vercel includes `Authorization: Bearer <CRON_SECRET>` in requests and the endpoint returns JSON such as `{ source: 'cron', overdueProcessed: 2, pendingProcessed: 5 }`.
+- Emails now use Resend when `RESEND_API_KEY` is set (with `RESEND_FROM`) and fall back to SMTP when `SMTP_HOST`/`SMTP_PASS` are provided.
 
-- `0 * * * *` -> `/api/automation/run`
+## Pending task emails
 
-When `CRON_SECRET` is set, Vercel cron sends `Authorization: Bearer <CRON_SECRET>` and the endpoint executes overdue task reminders securely.
-
-## Manual Automation Trigger
-
-- Admin can call: `GET /api/automation/run` while logged in.
-- Cron can call the same endpoint with bearer secret.
+- `PENDING_REMINDER_HOURS` (default 48) controls how many hours ahead of the deadline a task enters the pending window.
+- `PENDING_REMINDER_COOLDOWN_HOURS` (default 24) prevents duplicate emails by keeping a cooldown per task.
+- Pending reminders send an email + in-app notification when a task remains open and due soon.

@@ -25,16 +25,16 @@ enum TaskPriority {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   name          String
-  email         String         @unique
+  email         String    @unique
   passwordHash  String
-  role          Role           @default(MEMBER)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  role          Role      @default(MEMBER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   ownedProjects Project[]
-  createdTasks  Task[]         @relation("TaskCreatedBy")
-  assignedTasks Task[]         @relation("TaskAssignedTo")
+  createdTasks  Task[]    @relation("TaskCreatedBy")
+  assignedTasks Task[]    @relation("TaskAssignedTo")
   notifications Notification[]
 }
 
@@ -50,22 +50,23 @@ model Project {
 }
 
 model Task {
-  id                 Int          @id @default(autoincrement())
-  title              String
-  description        String?
-  status             TaskStatus   @default(TODO)
-  priority           TaskPriority @default(MEDIUM)
-  deadline           DateTime
-  createdAt          DateTime     @default(now())
-  updatedAt          DateTime     @updatedAt
-  completedAt        DateTime?
-  overdueNotifiedAt  DateTime?
-  projectId          Int
-  assignedToId       Int
-  createdById        Int
-  project            Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignedTo         User         @relation("TaskAssignedTo", fields: [assignedToId], references: [id], onDelete: Cascade)
-  createdBy          User         @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  id                Int          @id @default(autoincrement())
+  title             String
+  description       String?
+  status            TaskStatus   @default(TODO)
+  priority          TaskPriority @default(MEDIUM)
+  deadline          DateTime
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  completedAt       DateTime?
+  overdueNotifiedAt DateTime?
+  pendingNotifiedAt DateTime?
+  projectId         Int
+  assignedToId      Int
+  createdById       Int
+  project           Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignedTo        User         @relation("TaskAssignedTo", fields: [assignedToId], references: [id], onDelete: Cascade)
+  createdBy         User         @relation("TaskCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
 
   @@index([deadline])
   @@index([status])
