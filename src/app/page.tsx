@@ -15,7 +15,7 @@ export default function HomePage() {
           <header className="space-y-6 text-center">
             <p className="text-sm uppercase tracking-[0.4em] text-red-400">Workflow Automation</p>
             <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-              Own the next workflow procedure—plan, automate, and celebrate every delivery.
+              Own the next workflow procedureï¿½plan, automate, and celebrate every delivery.
             </h1>
             <p className="mx-auto max-w-3xl text-lg text-slate-300">
               Teams get a unified dashboard for projects, automations, and live notifications. Sign in to route data,
