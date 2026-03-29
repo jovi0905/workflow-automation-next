@@ -2,7 +2,7 @@
 
 :root {
   --space-grotesk: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -13,8 +13,8 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: var(--space-grotesk);
-  background: radial-gradient(circle at top, #221111, #050505 45%);
-  color: #f8fafc;
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 60%, #e2e8f0 100%);
+  color: #0f172a;
 }
 
 a {
