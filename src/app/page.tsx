@@ -73,7 +73,7 @@ export default function HomePage() {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/login"
+                  href="/signup"
                   className="rounded-full bg-white px-6 py-3 text-base font-semibold text-indigo-600 shadow-lg shadow-indigo-400/40 transition hover:-translate-y-0.5"
                 >
                   Get Started
@@ -117,7 +117,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-8">
+        <section id="how-it-works" className="space-y-8">
           <div className="flex flex-col gap-3">
             <p className="text-sm uppercase tracking-[0.4em] text-slate-500">Dashboard</p>
             <h2 className="text-3xl font-semibold text-slate-900">Preview the workspace</h2>

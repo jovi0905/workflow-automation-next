@@ -81,6 +81,12 @@ Open: [http://localhost:3000](http://localhost:3000)
 
 5. Deploy.
 
+## Self-serve sign-up
+
+- The landing page now links directly to `/signup`, where visitors can create a new member account with a minimum 8-character password.
+- The server action at `src/app/signup/actions.ts` validates the payload, hashes the password with bcrypt, saves the user with a `MEMBER` role, and signs them in immediately.
+- If you prefer to seed admins manually, keep using `npm run prisma:seed` or the dashboard’s Create User form.
+
 ## Automation reminders
 
 - `vercel.json` schedules `/api/automation/run` once per hour.
