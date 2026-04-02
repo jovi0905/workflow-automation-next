@@ -55,7 +55,7 @@ export default function SignUpPage() {
             disabled={isPending}
             className="w-full rounded-2xl bg-indigo-500 px-4 py-2 text-sm font-semibold text-white transition enabled:hover:bg-indigo-600 disabled:opacity-60"
           >
-            {isPending ? 'Creating account…' : 'Sign up'}
+            {isPending ? 'Creating account . . . ' : 'Sign up'}
           </button>
         </form>
         <p className="mt-4 text-xs text-slate-400">
