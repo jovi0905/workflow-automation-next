@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/auth';
 import { LoginForm } from '@/components/login-form';
@@ -14,6 +15,13 @@ export default async function LoginPage() {
         <h1 className="text-2xl font-semibold text-slate-900">Sign in</h1>
         <p className="mt-2 text-sm text-slate-600">Use your admin or member account.</p>
         <LoginForm />
+        <p className="mt-4 text-xs text-slate-500">
+          Need to create an account?{' '}
+          <Link href="/signup" className="font-semibold text-indigo-600 hover:text-indigo-500">
+            Sign up
+          </Link>
+          .
+        </p>
         <div className="mt-6 rounded-md bg-slate-50 p-3 text-xs text-slate-600">
           <p>Seed users:</p>
           <p>admin@workflow.local / admin123</p>
