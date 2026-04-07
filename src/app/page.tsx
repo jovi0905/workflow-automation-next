@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getSession } from '@/lib/auth';
 
 const features = [
   {
@@ -55,10 +56,33 @@ const testimonials = [
   }
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getSession();
+  const primaryAction = session ? { href: '/dashboard', label: 'Continue to dashboard' } : { href: '/login', label: 'Get Started' };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white text-slate-900">
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-6 py-16 sm:px-10 lg:px-12">
+        <nav className="flex items-center justify-between text-sm text-slate-600">
+          <Link href="/" className="text-lg font-semibold tracking-wide text-slate-900">
+            Workflow Automation
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="#features" className="hover:text-slate-900">
+              Product
+            </Link>
+            <Link href="#how-it-works" className="hover:text-slate-900">
+              How it works
+            </Link>
+            <Link
+              href="/login"
+              className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-slate-400 hover:text-slate-900"
+            >
+              Login
+            </Link>
+          </div>
+        </nav>
+
         <section className="relative flex flex-col gap-8 rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-500 to-white/90 p-10 shadow-[0_35px_100px_rgba(79,70,229,0.25)]">
           <div className="pointer-events-none absolute -top-10 right-10 h-32 w-32 rounded-full bg-white/40 blur-3xl" aria-hidden="true" />
           <div className="pointer-events-none absolute -bottom-10 left-0 h-40 w-40 rounded-full bg-indigo-400/30 blur-3xl" aria-hidden="true" />
@@ -69,14 +93,15 @@ export default function HomePage() {
                 Automate Your Workflows Effortlessly
               </h1>
               <p className="text-lg text-indigo-100">
-                Bring together teams, emails, and tasks in a single, elegant workspace. Strong visual hierarchy, intuitive controls, and thoughtful automation keep the work flowing.
+                Bring together teams, emails, and tasks in a single, elegant workspace. Strong visual hierarchy,
+                intuitive controls, and thoughtful automation keep the work flowing.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/signup"
+                  href={primaryAction.href}
                   className="rounded-full bg-white px-6 py-3 text-base font-semibold text-indigo-600 shadow-lg shadow-indigo-400/40 transition hover:-translate-y-0.5"
                 >
-                  Get Started
+                  {primaryAction.label}
                 </Link>
                 <Link
                   href="#features"
@@ -85,6 +110,13 @@ export default function HomePage() {
                   Learn More
                 </Link>
               </div>
+              {session ? (
+                <p className="text-sm text-indigo-100">
+                  Signed in as <span className="font-semibold text-white">{session.name}</span> ({session.role})
+                </p>
+              ) : (
+                <p className="text-sm text-indigo-100">New here? Tap “Get Started” to sign in and choose your role.</p>
+              )}
             </div>
             <div className="relative h-72 w-full max-w-sm rounded-3xl border border-white/40 bg-white/40 p-6 shadow-xl backdrop-blur" aria-hidden="true">
               <div className="flex h-full flex-col gap-4 rounded-2xl bg-gradient-to-b from-white to-indigo-100 p-5 shadow-lg">
@@ -117,7 +149,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="space-y-8">
+        <section className="space-y-8">
           <div className="flex flex-col gap-3">
             <p className="text-sm uppercase tracking-[0.4em] text-slate-500">Dashboard</p>
             <h2 className="text-3xl font-semibold text-slate-900">Preview the workspace</h2>
@@ -162,7 +194,7 @@ export default function HomePage() {
                 <p className="text-sm font-semibold text-slate-500">Activity Feed</p>
                 <div className="mt-4 space-y-3 text-sm text-slate-600">
                   <p className="flex items-center justify-between">
-                    <span>Caroline marked &quot;Email Review&quot; done</span>
+                    <span>Caroline marked “Email Review” done</span>
                     <span className="text-xs text-indigo-500">2m ago</span>
                   </p>
                   <p className="flex items-center justify-between">
@@ -179,7 +211,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="space-y-8">
+        <section id="how-it-works" className="space-y-8">
           <div className="flex flex-col gap-3">
             <p className="text-sm uppercase tracking-[0.4em] text-slate-500">How It Works</p>
             <h2 className="text-3xl font-semibold text-slate-900">A simple rhythm for high-performing teams</h2>
@@ -213,7 +245,7 @@ export default function HomePage() {
                 key={testimonial.name}
                 className="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
               >
-                <p className="text-base text-slate-700">&quot;{testimonial.quote}&quot;</p>
+                <p className="text-base text-slate-700">“{testimonial.quote}”</p>
                 <div className="space-y-1">
                   <p className="text-sm font-semibold text-slate-900">{testimonial.name}</p>
                   <p className="text-xs uppercase tracking-[0.4em] text-slate-500">{testimonial.role}</p>
@@ -232,20 +264,32 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-6 text-sm text-slate-600">
               <div className="space-y-2">
                 <p className="font-semibold text-slate-900">Product</p>
-                <Link href="#features" className="block">Features</Link>
-                <Link href="#how-it-works" className="block">How it works</Link>
-                <Link href="#" className="block">Pricing</Link>
+                <Link href="#features" className="block">
+                  Features
+                </Link>
+                <Link href="#how-it-works" className="block">
+                  How it works
+                </Link>
+                <Link href="#" className="block">
+                  Pricing
+                </Link>
               </div>
               <div className="space-y-2">
                 <p className="font-semibold text-slate-900">Company</p>
-                <Link href="#" className="block">Blog</Link>
-                <Link href="#" className="block">Careers</Link>
-                <Link href="#" className="block">Contact</Link>
+                <Link href="#" className="block">
+                  Blog
+                </Link>
+                <Link href="#" className="block">
+                  Careers
+                </Link>
+                <Link href="#" className="block">
+                  Contact
+                </Link>
               </div>
             </div>
           </div>
           <div className="mt-8 flex items-center justify-between text-sm text-slate-500">
-            <p> {new Date().getFullYear()} Workflow Automation. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Workflow Automation. All rights reserved.</p>
             <div className="flex gap-4">
               <span className="rounded-full border border-slate-200 px-3 py-1 text-xs uppercase tracking-[0.4em]">Li</span>
               <span className="rounded-full border border-slate-200 px-3 py-1 text-xs uppercase tracking-[0.4em]">Tw</span>

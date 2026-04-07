@@ -94,6 +94,16 @@ Open: [http://localhost:3000](http://localhost:3000)
 - If `CRON_SECRET` is configured, Vercel includes `Authorization: Bearer <CRON_SECRET>` in requests and the endpoint returns JSON such as `{ source: 'cron', overdueProcessed: 2, pendingProcessed: 5 }`.
 - Emails now use Resend when `RESEND_API_KEY` is set (with `RESEND_FROM`) and fall back to SMTP when `SMTP_HOST`/`SMTP_PASS` are provided.
 
+## Login + roles
+
+- The landing page directs traffic to `/login`. The role picker on the login form ensures the user signs in with the correct `ADMIN` or `MEMBER` account. If the selected role doesn’t match the stored role, the action returns a helpful message.
+- Once signed in, the hero CTA changes to “Continue to dashboard,” and the navbar keeps a login button and navigation anchors for quick access.
+
+## Immediate assignment emails
+
+- When an admin creates a task, the app now sends an instant email via Resend/SMTP and creates a `Notification` record of type `TASK_ASSIGNED`. That ensures you don’t wait for the cron before the assignee knows about the new work.
+- You can still rely on the hourly automation endpoint to fire overdue/pending reminders, giving you both real-time and scheduled notifications.
+
 ## Pending task emails
 
 - `PENDING_REMINDER_HOURS` (default 48) controls how many hours ahead of the deadline a task enters the pending window.

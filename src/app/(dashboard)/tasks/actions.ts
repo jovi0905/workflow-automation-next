@@ -4,6 +4,7 @@ import { TaskPriority, TaskStatus } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { requireUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { sendReminderEmail } from '@/lib/mailer';
 
 function parseDate(value: FormDataEntryValue | null) {
   if (!value) return null;
@@ -29,7 +30,7 @@ export async function createTaskAction(formData: FormData) {
     throw new Error('Invalid task details');
   }
 
-  await prisma.task.create({
+  const task = await prisma.task.create({
     data: {
       title,
       description: description || null,
@@ -42,6 +43,24 @@ export async function createTaskAction(formData: FormData) {
       completedAt: status === 'DONE' ? new Date() : null
     }
   });
+
+  const assignedUser = await prisma.user.findUnique({ where: { id: assignedToId } });
+  const project = await prisma.project.findUnique({ where: { id: projectId } });
+
+  if (assignedUser) {
+    const projectName = project?.name ?? 'workflow';
+    const message = `You have been assigned "${task.title}" (${projectName}).`;
+    const emailed = await sendReminderEmail(assignedUser.email, 'New Task Assigned', `${message} Review the details in the dashboard.`);
+
+    await prisma.notification.create({
+      data: {
+        userId: assignedToId,
+        message,
+        type: 'TASK_ASSIGNED',
+        sentEmailAt: emailed ? new Date() : null
+      }
+    });
+  }
 
   revalidatePath('/tasks');
   revalidatePath('/dashboard');
